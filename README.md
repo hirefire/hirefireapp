@@ -1,3 +1,5 @@
+# HireFireApp.com - The Heroku Worker Monitor
 
-# (Save Money and Scale With) [HireFireApp](http://hirefireapp.com/) - The [Heroku Worker](http://www.heroku.com/pricing#1-24) Monitor
+See the official website for more information!
 
+[http://hirefireapp.com/](http://hirefireapp.com/)
