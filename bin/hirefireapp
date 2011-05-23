@@ -1,6 +1,6 @@
 #! /usr/bin/env ruby
 
-require 'net/http'
+require 'open-uri'
 
 def usage
   puts
@@ -13,18 +13,18 @@ def usage
   puts "  gem install thin"
   puts "  thin start -p 3000"
   puts "  hirefireapp http://127.0.0.1:3000/"
+  puts
+  puts "SSL Enabled URLs:"
+  puts
+  puts "  hirefireapp https://mydomain.com/"
 end
 
 if (url = ARGV[0]).nil?
   usage
 else
-  uri = URI.parse(
-    File.join(url, 'hirefireapp', 'test')
-  )
-
   begin
-    response = Net::HTTP.get(uri)
-  rescue Errno::ECONNREFUSED
+    response = open(File.join(url, 'hirefireapp', 'test')).read
+  rescue
     puts
     puts "Could not connect to: #{url}"
     usage
