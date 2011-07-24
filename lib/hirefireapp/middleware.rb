@@ -6,6 +6,7 @@ module HireFireApp
     ##
     # Initialize the Rack Middleware by setting the app instance
     # as well as allowing HireFire to request information via the token uri.
+    #
     def initialize(app)
       @app   = app
       @token = ENV['HIREFIREAPP_TOKEN']
@@ -48,6 +49,7 @@ module HireFireApp
     # and show be processed as soon as possible (aka the ones that are pending)
     #
     # @returns [Fixnum, nil] job_count returns nil if something went wrong
+    #
     def job_count
       begin
         if defined?(Delayed::Worker)
@@ -69,6 +71,7 @@ module HireFireApp
     # exist, and we'll have to use the old :conditions hash notation.
     #
     # @returns [Fixnum] delayed_job_count the amount of jobs currently pending
+    #
     def count_delayed_job
       if defined?(ActiveRecord) and Delayed::Worker.backend.to_s =~ /ActiveRecord/
         if defined?(ActiveRecord::Relation)
@@ -95,6 +98,7 @@ module HireFireApp
     #
     # @returns [Fixnum] resque_job_count
     #  the number of jobs pending + the amount of workers currently working
+    #
     def count_resque
       Resque.info[:pending].to_i + Resque.info[:working].to_i
     end
@@ -103,6 +107,7 @@ module HireFireApp
     # Returns the name of the mapper, or "Not Found" if not found
     #
     # @returns [String]
+    #
     def mapper
       if defined?(Redis) and defined?(Resque)
         "Redis"
@@ -123,6 +128,7 @@ module HireFireApp
     # Returns the name of the worker type, or "Not Found" if not found
     #
     # @returns [String]
+    #
     def worker
       if defined?(Delayed::Job)
         "Delayed Job"
@@ -137,6 +143,7 @@ module HireFireApp
     # Returns "OK" if both the mapper and worker were found
     #
     # @returns [String]
+    #
     def ok
       if mapper =~ /Not Found/ or worker =~ /Not Found/
         "Incomplete"
@@ -149,6 +156,7 @@ module HireFireApp
     # Returns true if the REQUEST_PATH matches the test url
     #
     # @returns [String]
+    #
     def test?
       @env['REQUEST_PATH'] == "/hirefireapp/test"
     end
@@ -157,6 +165,7 @@ module HireFireApp
     # Returns true if the REQUEST_PATH matches the info url
     #
     # @returns [String]
+    #
     def info?
       @env['REQUEST_PATH'] == "/hirefireapp/#{@token}/info"
     end
