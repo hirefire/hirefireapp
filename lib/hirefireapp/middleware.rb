@@ -13,13 +13,13 @@ module HireFireApp
     end
 
     ##
-    # If we are currently in the Heroku environment, and the path to the HireFire info uri
-    # has been requested (and the token belongs to the app) then we'll calculate the amount of
-    # jobs that are currently pending (either Delayed Job with Active Record / Mongoid or Resque with Redis).
+    # Simple router. If a request come in at the "test" url (the url to test if HireFire is properly installed)
+    # then we return information about the current environment (orm, odm, kvs, worker library, etc). Returns "Not Found"
+    # and specified "what wasn't found" in case the environment isn't complete (e.g. the worker library could not be found).
     #
-    # Once the job_count has been determined, we build a simple JSON string object and
-    # create a rack-based json response with 200 status. This will be returned to the HireFire service
-    # in order to determine what actions to take in terms of scaling up or down.
+    # HireFireApp.com will always ping to the "info?" url. This will return JSON format containing the current job queue
+    # for the given worker library, as well as the queue_wait_time
+    #
     def call(env)
       @env = env
 
@@ -33,16 +33,28 @@ module HireFireApp
     end
 
     ##
-    # Response body
+    # Response body - This is the data that gets returned to the requester
+    # depending on which URL was requested.
+    #
     def each(&block)
       if test?
         block.call "[HireFireApp: #{ok}] Worker: #{worker} - Mapper: #{mapper}"
       elsif info?
-        block.call %|{"job_count":#{job_count || 'null'}}|
+        block.call %|{"job_count":#{job_count || 'null'}, "queue_wait_time":#{queue_wait_time}}|
       end
     end
 
     private
+
+    ##
+    # Returns the time it took to allow the request
+    # (delayed by the queue) in miliseconds
+    #
+    # @request [Integer] the queue wait time in miliseconds
+    #
+    def queue_wait_time
+      @env["HTTP_X_HEROKU_QUEUE_WAIT_TIME"].to_i
+    end
 
     ##
     # Counts the amount of jobs that are currently queued
