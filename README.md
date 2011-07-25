@@ -1,5 +1,6 @@
-# HireFireApp.com - The Heroku Worker Manager
+# HireFire - The Heroku Worker Manager
 
-Visit the official website for more information!
+HireFire is a hosted service that scales your Heroku web and worker dynos when necessary.
+This allows you to save a lot of money by allowing HireFire to shut down idle workers, and add scalability to both your web as well as your worker dynos.
 
-[http://hirefireapp.com/](http://hirefireapp.com/)
+Visit the [official website](http://hirefireapp.com/) for more information!
