@@ -165,21 +165,21 @@ module HireFireApp
     end
 
     ##
-    # Returns true if the REQUEST_PATH matches the test url
+    # Returns true if the PATH_INFO matches the test url
     #
     # @returns [String]
     #
     def test?
-      @env['REQUEST_PATH'] == "/hirefireapp/test"
+      @env['PATH_INFO'] == "/hirefireapp/test"
     end
 
     ##
-    # Returns true if the REQUEST_PATH matches the info url
+    # Returns true if the PATH_INFO matches the info url
     #
     # @returns [String]
     #
     def info?
-      @env['REQUEST_PATH'] == "/hirefireapp/#{@token}/info"
+      @env['PATH_INFO'] == "/hirefireapp/#{@token}/info"
     end
 
   end
