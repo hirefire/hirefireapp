@@ -4,13 +4,13 @@ Gem::Specification.new do |gem|
 
   # General configuration / information
   gem.name        = 'hirefireapp'
-  gem.version     = '0.0.2'
+  gem.version     = '0.0.3'
   gem.platform    = Gem::Platform::RUBY
   gem.authors     = 'Michael van Rooijen'
   gem.email       = 'meskyanichi@gmail.com'
   gem.homepage    = 'http://hirefireapp.com/'
-  gem.summary     = %|HireFireApp.com - The Heroku Worker Manager - Save money and scale at the same time!|
-  gem.description = %|HireFireApp.com - The Heroku Worker Manager - Save money and scale at the same time! We monitor your applications by the minute!|
+  gem.summary     = %|HireFireApp.com - The Heroku Process Manager - Autoscaling your web and worker dynos!|
+  gem.description = %|HireFireApp.com - The Heroku Process Manager - Autoscaling your web and worker dynos saving you time and money!|
 
   # Files and folder that need to be compiled in to the Ruby Gem
   gem.files         = %x[git ls-files].split("\n")
