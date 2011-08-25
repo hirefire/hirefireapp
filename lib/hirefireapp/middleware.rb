@@ -38,7 +38,10 @@ module HireFireApp
     #
     def each(&block)
       if test?
-        block.call "[HireFireApp: #{ok}] Worker: #{worker} - Mapper: #{mapper}"
+        out =  "[HireFire][Web: OK]"
+        out << "[HireFire [Worker: #{worker_ok}] Library: #{worker_library} - Mapper: #{mapper_library}"
+
+        block.call out
       elsif info?
         block.call %|{"job_count":#{job_count || 'null'}}|
       end
@@ -110,7 +113,7 @@ module HireFireApp
     #
     # @returns [String]
     #
-    def mapper
+    def mapper_library
       if defined?(Redis) and defined?(Resque)
         "Redis"
       elsif defined?(Delayed::Worker)
@@ -131,7 +134,7 @@ module HireFireApp
     #
     # @returns [String]
     #
-    def worker
+    def worker_library
       if defined?(Delayed::Job)
         "Delayed Job"
       elsif defined?(Resque)
@@ -146,8 +149,8 @@ module HireFireApp
     #
     # @returns [String]
     #
-    def ok
-      if mapper =~ /Not Found/ or worker =~ /Not Found/
+    def worker_ok
+      if mapper_library =~ /Not Found/ or worker_library =~ /Not Found/
         "Incomplete"
       else
         "OK"
