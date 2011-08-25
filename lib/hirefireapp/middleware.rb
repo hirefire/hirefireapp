@@ -18,7 +18,7 @@ module HireFireApp
     # and specified "what wasn't found" in case the environment isn't complete (e.g. the worker library could not be found).
     #
     # HireFireApp.com will always ping to the "info?" url. This will return JSON format containing the current job queue
-    # for the given worker library, as well as the queue_wait_time
+    # for the given worker library
     #
     def call(env)
       @env = env
@@ -40,21 +40,11 @@ module HireFireApp
       if test?
         block.call "[HireFireApp: #{ok}] Worker: #{worker} - Mapper: #{mapper}"
       elsif info?
-        block.call %|{"job_count":#{job_count || 'null'}, "queue_wait_time":#{queue_wait_time}}|
+        block.call %|{"job_count":#{job_count || 'null'}}|
       end
     end
 
     private
-
-    ##
-    # Returns the time it took to allow the request
-    # (delayed by the queue) in miliseconds
-    #
-    # @request [Integer] the queue wait time in miliseconds
-    #
-    def queue_wait_time
-      @env["HTTP_X_HEROKU_QUEUE_WAIT_TIME"].to_i
-    end
 
     ##
     # Counts the amount of jobs that are currently queued
