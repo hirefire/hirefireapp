@@ -31,9 +31,10 @@ else
     exit 1
   end
 
-  if response =~ /\[HireFireApp\:\s/
+  if response =~ /HireFire/
     puts response
   else
     puts "Could not find HireFireApp at #{url}."
+    exit 1
   end
 end
