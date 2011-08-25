@@ -13,12 +13,8 @@ module HireFireApp
     end
 
     ##
-    # Simple router. If a request come in at the "test" url (the url to test if HireFire is properly installed)
-    # then we return information about the current environment (orm, odm, kvs, worker library, etc). Returns "Not Found"
-    # and specified "what wasn't found" in case the environment isn't complete (e.g. the worker library could not be found).
-    #
-    # HireFireApp.com will always ping to the "info?" url. This will return JSON format containing the current job queue
-    # for the given worker library
+    # Return a HTML response if the "test url" has been requested.
+    # Return a JSON requested if the "info url" has been requested.
     #
     def call(env)
       @env = env
@@ -33,8 +29,9 @@ module HireFireApp
     end
 
     ##
-    # Response body - This is the data that gets returned to the requester
-    # depending on which URL was requested.
+    # If the "test url" has been requested, we'll return information regarding the HireFire installation in HTML format.
+    # If the "info url" has been regarding, we'll return the job count for the worker library (if applicable)
+    # in JSON format.
     #
     def each(&block)
       if test?
@@ -44,22 +41,21 @@ module HireFireApp
 
         if worker_library =~ /Not Found/
           out << "HireFire is able to auto-scale your web dynos, but not your worker dynos.\n"
-          out << ""
         else
           out << "HireFire is able to auto-scale both your web, as well as your worker dynos."
         end
 
         block.call out
       elsif info?
-        block.call %|{"job_count":#{job_count || 'null'}}|
+        block.call %|{"job_count":#{job_count || "null"}}|
       end
     end
 
     private
 
     ##
-    # Counts the amount of jobs that are currently queued
-    # and show be processed as soon as possible (aka the ones that are pending)
+    # Returns the amount of queued jobs that are scheduled to be processed
+    # at this time, or in the past, but not in the future.
     #
     # @returns [Fixnum, nil] job_count returns nil if something went wrong
     #
@@ -78,7 +74,7 @@ module HireFireApp
     ##
     # Makes Delayed::Job count the amount of currently pending jobs.
     # It'll use the ActiveRecord ORM, or the Mongoid ODM depending on
-    # which of them is defined.
+    # which is defined.
     #
     # If ActiveRecord 2 (or earlier) is being used, ActiveRecord::Relation doesn't
     # exist, and we'll have to use the old :conditions hash notation.
@@ -107,7 +103,7 @@ module HireFireApp
     end
 
     ##
-    # Makes Resque count the amount of currently pending jobs.
+    # Returns the amount of jobs in the queue + the ones that are being processed
     #
     # @returns [Fixnum] resque_job_count
     #  the number of jobs pending + the amount of workers currently working
@@ -117,7 +113,8 @@ module HireFireApp
     end
 
     ##
-    # Returns the name of the mapper, or "Not Found" if not found
+    # Returns the name of the mapper as a string, or "Not Found" if
+    # the mapper could not be found
     #
     # @returns [String]
     #
@@ -138,7 +135,8 @@ module HireFireApp
     end
 
     ##
-    # Returns the name of the worker type, or "Not Found" if not found
+    # Returns the name of the worker library, or "Not Found" if the worker library
+    # could not be found / is not supported
     #
     # @returns [String]
     #
@@ -153,7 +151,8 @@ module HireFireApp
     end
 
     ##
-    # Returns "OK" if both the mapper and worker were found
+    # Returns "OK" if both the mapper and worker were found, or "INCOMPLETE"
+    # if either of them could not be found
     #
     # @returns [String]
     #
