@@ -38,8 +38,16 @@ module HireFireApp
     #
     def each(&block)
       if test?
-        out =  "[HireFire][Web: OK]"
-        out << "[HireFire [Worker: #{worker_ok}] Library: #{worker_library} - Mapper: #{mapper_library}"
+        out =  "\n"
+        out << "[HireFire][Web]    OK\n"
+        out << "[HireFire][Worker] #{worker_ok} (Library: #{worker_library}, Mapper: #{mapper_library})\n\n"
+
+        if worker_library =~ /Not Found/
+          out << "HireFire is able to auto-scale your web dynos, but not your worker dynos.\n"
+          out << ""
+        else
+          out << "HireFire is able to auto-scale both your web, as well as your worker dynos."
+        end
 
         block.call out
       elsif info?
@@ -151,7 +159,7 @@ module HireFireApp
     #
     def worker_ok
       if mapper_library =~ /Not Found/ or worker_library =~ /Not Found/
-        "Incomplete"
+        "INCOMPLETE"
       else
         "OK"
       end
