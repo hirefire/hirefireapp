@@ -94,8 +94,12 @@ module HireFireApp
             ]
           ).count
         end
-      elsif defined?(Mongoid) and backend?(/Mongoid/) \
-      or defined?(MongoMapper) and backend?(/MongoMapper/)
+      elsif defined?(Mongoid) and backend?(/Mongoid/)
+        Delayed::Job.where(
+          :failed_at  => nil,
+          :run_at.lte => Time.now
+        ).count
+      elsif defined?(MongoMapper) and backend?(/MongoMapper/)
         Delayed::Job.where(
           :failed_at  => nil,
           :run_at.lte => Time.now
