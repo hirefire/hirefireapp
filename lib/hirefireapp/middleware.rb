@@ -82,7 +82,7 @@ module HireFireApp
     # @returns [Fixnum] delayed_job_count the amount of jobs currently pending
     #
     def count_delayed_job
-      if defined?(ActiveRecord) and Delayed::Worker.backend.to_s =~ /ActiveRecord/
+      if defined?(ActiveRecord) and backend?(/ActiveRecord/)
         if defined?(ActiveRecord::Relation)
           Delayed::Job.
           where(:failed_at => nil).
@@ -94,12 +94,8 @@ module HireFireApp
             ]
           ).count
         end
-      elsif defined?(Mongoid) and Delayed::Worker.backend.to_s =~ /Mongoid/
-        Delayed::Job.where(
-          :failed_at  => nil,
-          :run_at.lte => Time.now
-        ).count
-      elsif defined?(MongoMapper) and Delayed::Worker.backend.to_s =~ /MongoMapper/
+      elsif defined?(Mongoid) and backend?(/Mongoid/) \
+      or defined?(MongoMapper) and backend?(/MongoMapper/)
         Delayed::Job.where(
           :failed_at  => nil,
           :run_at.lte => Time.now
@@ -127,11 +123,11 @@ module HireFireApp
       if defined?(Redis) and defined?(Resque)
         "Redis"
       elsif defined?(Delayed::Worker)
-        if defined?(ActiveRecord) and Delayed::Worker.backend.to_s =~ /ActiveRecord/
+        if defined?(ActiveRecord) and backend?(/ActiveRecord/)
           "Active Record"
-        elsif defined?(Mongoid) and Delayed::Worker.backend.to_s =~ /Mongoid/
+        elsif defined?(Mongoid) and backend?(/Mongoid/)
           "Mongoid"
-        elsif defined?(MongoMapper)
+        elsif defined?(MongoMapper) and backend?(/MongoMapper/)
           "Mongo Mapper"
         else
           "Not Found"
@@ -169,6 +165,16 @@ module HireFireApp
       else
         "OK"
       end
+    end
+
+    ##
+    # Returns "true" if the mapper is used by Delayed::Job backend
+    #
+    # @returns [Boolean]
+    #
+    def backend?(mapper)
+      return true if Delayed::Worker.backend.to_s =~ mapper
+      false
     end
 
     ##
