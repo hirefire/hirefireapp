@@ -73,8 +73,8 @@ module HireFireApp
 
     ##
     # Makes Delayed::Job count the amount of currently pending jobs.
-    # It'll use the ActiveRecord ORM, or the Mongoid ODM depending on
-    # which is defined.
+    # It'll use the ActiveRecord ORM, Mongoid ODM or MongoMapper ODM
+    # depending on which is defined.
     #
     # If ActiveRecord 2 (or earlier) is being used, ActiveRecord::Relation doesn't
     # exist, and we'll have to use the old :conditions hash notation.
@@ -95,6 +95,11 @@ module HireFireApp
           ).count
         end
       elsif defined?(Mongoid) and Delayed::Worker.backend.to_s =~ /Mongoid/
+        Delayed::Job.where(
+          :failed_at  => nil,
+          :run_at.lte => Time.now
+        ).count
+      elsif defined?(MongoMapper) and Delayed::Worker.backend.to_s =~ /MongoMapper/
         Delayed::Job.where(
           :failed_at  => nil,
           :run_at.lte => Time.now
@@ -126,6 +131,8 @@ module HireFireApp
           "Active Record"
         elsif defined?(Mongoid) and Delayed::Worker.backend.to_s =~ /Mongoid/
           "Mongoid"
+        elsif defined?(MongoMapper)
+          "Mongo Mapper"
         else
           "Not Found"
         end
