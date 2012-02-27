@@ -205,7 +205,7 @@ module HireFireApp
     ##
     # Returns true if the PATH_INFO matches the test url
     #
-    # @returns [String]
+    # @returns [Boolean]
     #
     def test?
       @env['PATH_INFO'] =~ %r{^/hirefireapp/test/?}
@@ -214,7 +214,7 @@ module HireFireApp
     ##
     # Returns true if the PATH_INFO matches the info url
     #
-    # @returns [String]
+    # @returns [Boolean]
     #
     def info?
       @env['PATH_INFO'] =~ %r{^/hirefireapp/#{@token}/info/?}
