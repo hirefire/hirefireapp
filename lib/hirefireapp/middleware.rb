@@ -8,8 +8,9 @@ module HireFireApp
     # as well as allowing HireFire to request information via the token uri.
     #
     def initialize(app)
-      @app   = app
-      @token = ENV['HIREFIREAPP_TOKEN']
+      @app    = app
+      @token  = ENV['HIREFIREAPP_TOKEN']
+      @queues = ENV['HIREFIREAPP_QUEUES']
     end
 
     ##
@@ -131,7 +132,13 @@ module HireFireApp
     #  the number of jobs pending + the amount of workers currently working
     #
     def count_resque
-      Resque.info[:pending].to_i + Resque.info[:working].to_i
+      if @queues
+        pending = @queues.split(',').map { |queue| Resque.size(queue) }.reduce(:+)
+        working = Resque.working.select { |worker| @queues.include?(worker.job['queue']) }.count
+        pending + working
+      else
+        Resque.info[:pending] + Resque.info[:working]
+      end
     end
 
     ##
