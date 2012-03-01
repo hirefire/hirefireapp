@@ -196,7 +196,7 @@ module HireFireApp
     # @returns [String]
     #
     def info?
-      @env['PATH_INFO'] =~ %r{/hirefireapp/#{@token}/info/?}
+      @env['PATH_INFO'] =~ %r{^/hirefireapp/#{@token}/info/?}
     end
 
   end
