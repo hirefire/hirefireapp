@@ -67,6 +67,7 @@ module HireFireApp
           count_resque
         end
       rescue => error
+        puts error
         nil
       end
     end
