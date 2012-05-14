@@ -67,6 +67,7 @@ module HireFireApp
           count_resque
         end
       rescue => error
+        puts error
         nil
       end
     end
@@ -104,6 +105,10 @@ module HireFireApp
           :failed_at  => nil,
           :run_at.lte => Time.now
         ).count
+      elsif defined?(DataMapper) and backend?(/DataMapper/)
+        Delayed::Job.count(
+          :failed_at  => nil,
+          :run_at.lte => Time.now)
       end
     end
 
