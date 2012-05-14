@@ -105,6 +105,10 @@ module HireFireApp
           :failed_at  => nil,
           :run_at.lte => Time.now
         ).count
+      elsif defined?(DataMapper) and backend?(/DataMapper/)
+        Delayed::Job.count(
+          :failed_at  => nil,
+          :run_at.lte => Time.now)
       end
     end
 
