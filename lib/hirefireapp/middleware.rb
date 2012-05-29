@@ -65,6 +65,8 @@ module HireFireApp
           count_delayed_job
         elsif defined?(Resque)
           count_resque
+        elsif defined?(QC::Worker)
+          count_queue_classic
         end
       rescue => error
         puts error
@@ -115,6 +117,16 @@ module HireFireApp
     ##
     # Returns the amount of jobs in the queue + the ones that are being processed
     #
+    # @returns [Fixnum] queue_classic_job_count
+    #  the number of jobs pending + the amount of workers currently working
+    #
+    def count_queue_classic
+      QC::Queries.count
+    end
+
+    ##
+    # Returns the amount of jobs in the queue + the ones that are being processed
+    #
     # @returns [Fixnum] resque_job_count
     #  the number of jobs pending + the amount of workers currently working
     #
@@ -141,6 +153,8 @@ module HireFireApp
         else
           "Not Found"
         end
+      elsif defined?(QC::Worker)
+        "Active Record"
       else
         "Not Found"
       end
@@ -157,6 +171,8 @@ module HireFireApp
         "Delayed Job"
       elsif defined?(Resque)
         "Resque"
+      elsif defined?(QC::Worker)
+        "Queue Classic"
       else
         "Not Found"
       end
