@@ -89,27 +89,31 @@ module HireFireApp
         if defined?(ActiveRecord::Relation)
           Delayed::Job.
           where(:failed_at => nil).
+          where(:queue => Delayed::Worker.default_queue_name).
           where('run_at <= ?', Time.now).count
         else
           Delayed::Job.all(
             :conditions => [
-              'failed_at IS NULL and run_at <= ?', Time.now.utc
+              'failed_at IS NULL and run_at <= ? and queue = ?', Time.now.utc, Delayed::Worker.default_queue_name
             ]
           ).count
         end
       elsif defined?(Mongoid) and backend?(/Mongoid/)
         Delayed::Job.where(
           :failed_at  => nil,
+          :queue      => Delayed::Worker.default_queue_name,
           :run_at.lte => Time.now
         ).count
       elsif defined?(MongoMapper) and backend?(/MongoMapper/)
         Delayed::Job.where(
           :failed_at  => nil,
+          :queue      => Delayed::Worker.default_queue_name,
           :run_at.lte => Time.now
         ).count
       elsif defined?(DataMapper) and backend?(/DataMapper/)
         Delayed::Job.count(
           :failed_at  => nil,
+          :queue      => Delayed::Worker.default_queue_name,
           :run_at.lte => Time.now)
       end
     end
