@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'new_relic/agent/instrumentation/rack'
+
 module HireFireApp
   class Middleware
 
