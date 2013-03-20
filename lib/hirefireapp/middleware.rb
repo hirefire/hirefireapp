@@ -28,6 +28,9 @@ module HireFireApp
       end
     end
 
+    # Do the include after the call method is defined:
+    include ::NewRelic::Agent::Instrumentation::Rack
+
     ##
     # If the "test url" has been requested, we'll return information regarding the HireFire installation in HTML format.
     # If the "info url" has been regarding, we'll return the job count for the worker library (if applicable)
