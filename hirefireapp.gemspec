@@ -4,7 +4,7 @@ Gem::Specification.new do |gem|
 
   # General configuration / information
   gem.name        = 'hirefireapp'
-  gem.version     = '0.1.0'
+  gem.version     = '0.1.1'
   gem.platform    = Gem::Platform::RUBY
   gem.authors     = 'Michael van Rooijen'
   gem.email       = 'michael@hirefire.io'
