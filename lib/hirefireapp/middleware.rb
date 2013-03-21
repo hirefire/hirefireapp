@@ -131,7 +131,8 @@ module HireFireApp
     #  the number of jobs pending + the amount of workers currently working
     #
     def count_resque
-      Resque.info[:pending].to_i + Resque.info[:working].to_i
+      info = Resque.info
+      info[:pending].to_i + info[:working].to_i
     end
 
     ##
