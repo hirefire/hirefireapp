@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-require 'new_relic/agent/instrumentation/rack'
-
 module HireFireApp
   class Middleware
 
@@ -30,9 +28,6 @@ module HireFireApp
       end
     end
 
-    # Do the include after the call method is defined:
-    include ::NewRelic::Agent::Instrumentation::Rack
-
     ##
     # If the "test url" has been requested, we'll return information regarding the HireFire installation in HTML format.
     # If the "info url" has been regarding, we'll return the job count for the worker library (if applicable)
@@ -52,7 +47,7 @@ module HireFireApp
 
         block.call out
       elsif info?
-        block.call %|{"job_count": "null"}|
+        block.call %|{"job_count": #{job_count || "null"} }|
       end
     end
 
