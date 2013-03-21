@@ -52,7 +52,7 @@ module HireFireApp
 
         block.call out
       elsif info?
-        block.call %|{"job_count":#{job_count || "null"}}|
+        block.call %|{"job_count": "null"}|
       end
     end
 
