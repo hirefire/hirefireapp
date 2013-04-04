@@ -91,11 +91,9 @@ module HireFireApp
           where(:failed_at => nil).
           where('run_at <= ?', Time.now).count
         else
-          Delayed::Job.all(
-            :conditions => [
-              'failed_at IS NULL and run_at <= ?', Time.now.utc
-            ]
-          ).count
+          Delayed::Job.count(
+            :id, :conditions => ["failed_at IS NULL and run_at <= ?", Time.now.utc]
+          )
         end
       elsif defined?(Mongoid) and backend?(/Mongoid/)
         Delayed::Job.where(
