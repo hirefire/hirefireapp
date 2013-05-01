@@ -129,8 +129,19 @@ module HireFireApp
     #  the number of jobs pending + the amount of workers currently working
     #
     def count_resque
-      info = Resque.info
-      info[:pending].to_i + info[:working].to_i
+      queues = ::Resque.queues
+
+      in_queues = queues.inject(0) do |memo, queue|
+        memo += ::Resque.size(queue)
+        memo
+      end
+
+      in_progress = ::Resque::Worker.all.inject(0) do |memo, worker|
+        memo += 1 if queues.include?(worker.job["queue"])
+        memo
+      end
+
+      in_queues + in_progress
     end
 
     ##
