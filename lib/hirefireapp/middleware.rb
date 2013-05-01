@@ -9,7 +9,7 @@ module HireFireApp
     #
     def initialize(app)
       @app   = app
-      @token = ENV['HIREFIREAPP_TOKEN']
+      @token = ENV['HIREFIREAPP_TOKEN'] || "development"
     end
 
     ##
